@@ -545,6 +545,27 @@
             font-size: 0.7rem;
             opacity: 0.4;
         }
+        .footer .visitor-count {
+            margin-top: 6px;
+            font-size: 0.78rem;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(15, 139, 94, 0.18);
+            color: var(--gray);
+            border-radius: 30px;
+            padding: 4px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        .footer .visitor-count i {
+            color: var(--primary);
+            font-size: 0.85rem;
+        }
+        .footer .visitor-count b {
+            color: var(--charcoal);
+            font-weight: 700;
+        }
 
         /* ===== ANIMATIONS ===== */
         .fade-up {
@@ -763,9 +784,45 @@
             <div class="location-list">
                 <i class="fas fa-map-pin"></i> ময়মনসিংহ · ত্রিশাল · ভালুকা · নেত্রকোণা · জামালপুর · শেরপুর
             </div>
+            <div class="visitor-count">
+                <i class="fas fa-eye"></i>
+                ভিজিটর: <b id="visitorCount">...</b>
+            </div>
             <small>&copy; ২০২৬ dakdin.com · System Under Construction</small>
         </div>
     </footer>
+
+    <script>
+        // Visitor counter using CountAPI (free, no signup needed)
+        (function () {
+            var NS = "dakdin";   // change to a unique value (e.g. your site name)
+            var KEY = "visitors";
+            var el = document.getElementById("visitorCount");
+
+            function setCount(n) {
+                if (el && Number.isFinite(n)) {
+                    // format with thousand separators
+                    el.textContent = n.toLocaleString("en-US");
+                }
+            }
+
+            // 1) increment the counter (every page load adds +1)
+            fetch("https://api.countapi.xyz/hit/" + NS + "/" + KEY, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: 1 })
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (d) { setCount(d.value); })
+                // 2) if hitting fails (offline/blocked), just read current value
+                .catch(function () {
+                    fetch("https://api.countapi.xyz/get/" + NS + "/" + KEY)
+                        .then(function (r) { return r.json(); })
+                        .then(function (d) { setCount(d.value); })
+                        .catch(function () { el.textContent = "—"; });
+                });
+        })();
+    </script>
 
 </body>
 </html>
